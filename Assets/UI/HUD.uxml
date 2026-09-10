@@ -1,0 +1,39 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+
+    <Style src="HUD.uss" />
+
+    <ui:VisualElement class="screen">
+
+        <ui:Label
+            name="scoreLabel"
+            text="Score: 0"
+            class="score"
+        />
+
+        <ui:Label
+            name="startLabel"
+            text="Press any key to start"
+            class="start-message"
+        />
+
+        <ui:VisualElement
+            name="gameOverPanel"
+            class="game-over"
+        >
+
+            <ui:Label
+                text="Game Over"
+                class="game-over-title"
+            />
+
+            <ui:Label
+                name="finalScoreLabel"
+                text="Final Score: 0"
+                class="final-score"
+            />
+
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+
+</ui:UXML>

@@ -1,51 +1,77 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using TMPro;
 using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private Spawner spawner;
     // Rigidbody of the player.
     private Rigidbody rb;
-    public Transform target;
-
-    // Variable to keep track of collected "PickUp" objects.
-    private int count;
-
-    // Movement along X and Y axes.
     private float movementX;
-    [SerializeField] private float borderPadding = 0.5f;
-
-    // Speed at which the player moves.
-    public int speed;
-    public int jumpForce;
-    public GameObject winTextObject;
+    private float borderPadding = 0.5f;
+    private float speed = 6.7f;
+    private int jumpForce = 7;
+    private bool gameStarted = false;
+    private bool gameOver = false;
 
     // Start is called before the first frame update.
     void Start()
     {
         // Get and store the Rigidbody component attached to the player.
         rb = GetComponent<Rigidbody>();
-        winTextObject.SetActive(false);
         rb.useGravity = false;
+
+        if (HUDController.Instance != null)
+        {
+            HUDController.Instance.ShowStart();
+        }
+
+        if (ScoreManager.Instance != null)
+        {
+            ScoreManager.Instance.ResetScore();
+        }
     }
 
     // This function is called when a move input is detected.
     void OnMove(InputValue movementValue)
     {
-        // Convert the input value into a Vector2 for movement.
         Vector2 movementVector = movementValue.Get<Vector2>();
 
-        // Store the X and Y components of the movement.
         movementX = movementVector.x;
-        
+
+        if (movementX != 0)
+        {
+            StartGameIfNeeded();
+        }
+    }
+
+    private void StartGameIfNeeded()
+    {
+        if (!gameStarted && !gameOver)
+        {
+            gameStarted = true;
+
+            rb.useGravity = true;
+
+            HUDController.Instance.StartGame();
+
+            spawner.StartSpawning();
+        }
     }
 
     void OnJump(InputValue jumpValue)
     {
         if (jumpValue.isPressed)
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            StartGameIfNeeded();
+
+            if (!gameOver)
+            {
+                rb.AddForce(
+                    Vector3.up * jumpForce,
+                    ForceMode.Impulse
+                );
+            }
         }
     }
 
@@ -120,9 +146,26 @@ public class PlayerController : MonoBehaviour
 
     private void LoseGame()
     {
-        winTextObject.gameObject.SetActive(true);
-        winTextObject.GetComponent<TextMeshProUGUI>().text = "You Lose!";
-        Reset();
+        if (gameOver)
+        {
+            return;
+        }
+
+        gameOver = true;
+
+        // Save score before resetting it
+        int finalScore = ScoreManager.Instance.Score;
+
+        // Show Game Over with final score
+        HUDController.Instance.ShowGameOver(finalScore);
+
+        // Reset the tracked score
+        ScoreManager.Instance.ResetScore();
+
+        // Stop player
+        rb.useGravity = false;
+        rb.linearVelocity = Vector3.zero;
+        movementX = 0f;
     }
 
     void Reset()
@@ -131,19 +174,29 @@ public class PlayerController : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+
     // FixedUpdate is called once per fixed frame-rate frame.
     private void FixedUpdate()
     {
-        // Create a 3D movement vector using the X and Y inputs.
-        Vector3 movement = new Vector3(movementX, 0.0f, 0.0f);
+        if (!gameStarted || gameOver)
+        {
+            return;
+        }
+
+        Vector3 movement = new Vector3(movementX, 0f, 0f);
+
         clampPlayerMovement();
 
-        // Apply force to the Rigidbody to move the player.
         rb.AddForce(movement * speed);
+    }
 
-        if(Keyboard.current.anyKey.isPressed && !rb.useGravity)
+    private void Update()
+    {
+        if (gameOver &&
+            Keyboard.current != null &&
+            Keyboard.current.anyKey.wasPressedThisFrame)
         {
-            rb.useGravity = true;
+            Reset();
         }
     }
 }

@@ -5,13 +5,14 @@ public class Spawner : MonoBehaviour
 {
 
     [SerializeField] private GameObject[] wallPrefab;
-    [SerializeField] private float spawnInterval = 3f;
+    [SerializeField] private float spawnInterval = 1.8f;
     [SerializeField] private int randomListObject;
-    private float speed = 15f;
+    private float speed = 20f;
     [SerializeField] private Transform player;
     
     [SerializeField] private Material materialA;
     [SerializeField] private Material materialB;
+    private bool gameStarted = false;
     private bool useFirstMaterial = true;
     private float timer;
 
@@ -43,10 +44,21 @@ public class Spawner : MonoBehaviour
         }
     }
 
+    public void StartSpawning()
+    {
+        gameStarted = true;
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if (!gameStarted)
+        {
+            return;
+        }
+
         timer += Time.deltaTime;
+
         if (timer >= spawnInterval)
         {
             SpawnObstacle();
