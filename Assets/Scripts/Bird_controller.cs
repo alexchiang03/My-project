@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
         // Get and store the Rigidbody component attached to the player.
         rb = GetComponent<Rigidbody>();
         winTextObject.SetActive(false);
+        rb.useGravity = false;
     }
 
     // This function is called when a move input is detected.
@@ -122,5 +123,10 @@ public class PlayerController : MonoBehaviour
 
         // Apply force to the Rigidbody to move the player.
         rb.AddForce(movement * speed);
+
+        if(Keyboard.current.anyKey.isPressed && !rb.useGravity)
+        {
+            rb.useGravity = true;
+        }
     }
 }
