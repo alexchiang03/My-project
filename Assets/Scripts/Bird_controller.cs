@@ -53,14 +53,17 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 position = rb.position;
 
+        //find distance between player and camera
         float distance = transform.position.z - Camera.main.transform.position.z;
 
+        //find border of camera with the distance of Z
         float leftBorder = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, distance)).x + borderPadding;
         float rightBorder = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, distance)).x - borderPadding;
         float topBorder = Camera.main.ViewportToWorldPoint(new Vector3(0f, 1.0f, distance)).y - borderPadding;
         float bottomBorder = Camera.main.ViewportToWorldPoint(new Vector3(0f, 0f, distance)).y + borderPadding;
 
-        if (position.y >= topBorder)
+    //Border control
+    if (position.y >= topBorder)
     {
         position.y = topBorder;
 
@@ -100,12 +103,26 @@ public class PlayerController : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("obstacle"))
+        //floor game over
+        if (collision.gameObject.CompareTag("obstacle") || collision.gameObject.CompareTag("moving wall"))
         {
-            winTextObject.gameObject.SetActive(true);
-            winTextObject.GetComponent<TextMeshProUGUI>().text = "You Lose!";
-            Reset();
+            LoseGame();
+            return;
         }
+
+        Transform parent = collision.transform.parent;
+
+        if (parent != null && (parent.CompareTag("obstacle") || parent.CompareTag("moving wall")))
+        {
+            LoseGame();
+        }
+    }
+
+    private void LoseGame()
+    {
+        winTextObject.gameObject.SetActive(true);
+        winTextObject.GetComponent<TextMeshProUGUI>().text = "You Lose!";
+        Reset();
     }
 
     void Reset()
