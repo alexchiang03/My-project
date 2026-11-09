@@ -17,6 +17,11 @@ public class HUDController : MonoBehaviour
 
     private void Start()
     {
+        ShowStart();
+    }
+
+    private void OnEnable()
+    {
         UIDocument uiDocument = GetComponent<UIDocument>();
         VisualElement root = uiDocument.rootVisualElement;
 
@@ -24,8 +29,6 @@ public class HUDController : MonoBehaviour
         startLabel = root.Q<Label>("startLabel");
         finalScoreLabel = root.Q<Label>("finalScoreLabel");
         gameOverPanel = root.Q<VisualElement>("gameOverPanel");
-
-        ShowStart();
     }
 
     public void UpdateScore(int score)
