@@ -10,10 +10,7 @@ public class Spawner : MonoBehaviour
     private float speed = 20f;
     [SerializeField] private Transform player;
     
-    [SerializeField] private Material materialA;
-    [SerializeField] private Material materialB;
     private bool gameStarted = false;
-    private bool useFirstMaterial = true;
     private float timer;
 
     private void SpawnObstacle()
@@ -21,27 +18,7 @@ public class Spawner : MonoBehaviour
         randomListObject = Random.Range(0, wallPrefab.Length);
         GameObject walls = Instantiate(wallPrefab[randomListObject], transform.position, Quaternion.identity, transform);
 
-        Material selectedMaterial;
-        if (useFirstMaterial)
-        {
-            selectedMaterial = materialA;
-        }
-        else
-        {
-            selectedMaterial = materialB;
-        }
-
-        useFirstMaterial = !useFirstMaterial;
-
-        Obstacle obstacleScript = walls.GetComponent<Obstacle>();
-        if (obstacleScript != null)
-        {
-            obstacleScript.setup(speed, player, selectedMaterial);
-        }
-        else
-        {
-            Debug.LogError("Obstacle script ontbreekt op prefab: " + walls.name);
-        }
+        walls.GetComponent<Obstacle>().setup(speed, player);
     }
 
     public void StartSpawning()

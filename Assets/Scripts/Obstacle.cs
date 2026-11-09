@@ -7,17 +7,11 @@ public class Obstacle : MonoBehaviour
     private Transform player;
     private Renderer[] renderers;
 
-    public void setup(float moveSpeed, Transform playerTransform, Material material)
+    public void setup(float moveSpeed, Transform playerTransform)
     {
         speed = moveSpeed;
         player = playerTransform;
-
         renderers = GetComponentsInChildren<Renderer>();
-
-        foreach (Renderer renderer in renderers)
-        {
-            renderer.material = material;
-        }
     }
 
     void Update()
