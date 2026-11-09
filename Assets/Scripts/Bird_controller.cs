@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     private int jumpForce = 7;
     private bool gameStarted = false;
     private bool gameOver = false;
+    public Animator my_animator;
 
     // Start is called before the first frame update.
     void Start()
@@ -146,10 +147,6 @@ public class PlayerController : MonoBehaviour
 
     private void LoseGame()
     {
-        if (gameOver)
-        {
-            return;
-        }
 
         gameOver = true;
 
@@ -166,6 +163,7 @@ public class PlayerController : MonoBehaviour
         rb.useGravity = false;
         rb.linearVelocity = Vector3.zero;
         movementX = 0f;
+        my_animator.Play("Death");
     }
 
     void Reset()
