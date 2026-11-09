@@ -15,6 +15,7 @@ public class ScoreTrigger : MonoBehaviour
             Debug.Log("Score +1");
 
             ScoreManager.Instance.AddScore();
+            AudioManager.Instance.PlayPoint();
         }
     }
 }

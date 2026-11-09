@@ -72,6 +72,7 @@ public class PlayerController : MonoBehaviour
                     Vector3.up * jumpForce,
                     ForceMode.Impulse
                 );
+                AudioManager.Instance.PlayFlap();
             }
         }
     }
@@ -164,6 +165,7 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
         movementX = 0f;
         my_animator.Play("Death");
+        AudioManager.Instance.PlayHit();
     }
 
     void Reset()
